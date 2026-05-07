@@ -318,6 +318,7 @@ uint32_t srsran_pdcch_common_locations_ncce(uint32_t nof_cce, srsran_dci_locatio
         c[k].L    = l;
         c[k].ncce = ncce;
         DEBUG("Common SS Candidate %d: nCCE: %d/%d, L: %d", k, c[k].ncce, nof_cce, c[k].L);
+        ERROR("[TRACK-PDCCH] Common SS Candidate %d: nCCE=%d, L=%d, TotalCCE=%d", k, ncce, L, nof_cce);
         k++;
       }
     }
@@ -338,6 +339,8 @@ int srsran_pdcch_dci_decode(srsran_pdcch_t* q, float* e, uint8_t* data, uint32_t
 {
   uint16_t p_bits, crc_res;
   uint8_t* x;
+
+  ERROR("************************************* PDCCH Decode Start *************************************");
 
   if (q != NULL) {
     if (data != NULL && E <= q->max_bits && nof_bits <= SRSRAN_DCI_MAX_BITS) {
@@ -377,6 +380,8 @@ int srsran_pdcch_dci_decode(srsran_pdcch_t* q, float* e, uint8_t* data, uint32_t
  */
 int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dci_cfg_t* dci_cfg, srsran_dci_msg_t* msg)
 {
+  ERROR("=================================== PDCCH MSG Start ============================");
+
   int ret = SRSRAN_ERROR_INVALID_INPUTS;
   if (q != NULL && msg != NULL && srsran_dci_location_isvalid(&msg->location)) {
     if (msg->location.ncce * 72 + PDCCH_FORMAT_NOF_BITS(msg->location.L) > NOF_CCE(sf->cfi) * 72) {
@@ -394,7 +399,7 @@ int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dc
       }
       mean /= e_bits;
 
-      if (mean > 0.3f) {
+      if (mean > 0.2f) {
         ret = srsran_pdcch_dci_decode(q, &q->llr[msg->location.ncce * 72], msg->payload, e_bits, nof_bits, &msg->rnti);
         if (ret == SRSRAN_SUCCESS) {
           msg->nof_bits = nof_bits;
@@ -405,7 +410,7 @@ int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dc
         } else {
           ERROR("Error calling pdcch_dci_decode");
         }
-        INFO("Decoded DCI: nCCE=%d, L=%d, format=%s, msg_len=%d, mean=%f, crc_rem=0x%x",
+        INFO("*********** Decoded DCI: nCCE=%d, L=%d, format=%s, msg_len=%d, mean=%f, crc_rem=0x%x",
              msg->location.ncce,
              msg->location.L,
              srsran_dci_format_string(msg->format),
@@ -413,7 +418,7 @@ int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dc
              mean,
              msg->rnti);
       } else {
-        INFO("Skipping DCI:  nCCE=%d, L=%d, msg_len=%d, mean=%f", msg->location.ncce, msg->location.L, nof_bits, mean);
+        INFO("*********** Skipping DCI:  nCCE=%d, L=%d, msg_len=%d, mean=%f", msg->location.ncce, msg->location.L, nof_bits, mean);
       }
     }
   } else if (msg != NULL) {
@@ -452,6 +457,7 @@ int srsran_pdcch_extract_llr(srsran_pdcch_t*        q,
                              cf_t*                  sf_symbols[SRSRAN_MAX_PORTS])
 {
   int ret = SRSRAN_ERROR_INVALID_INPUTS;
+  ERROR("=================================== PDCCH srsran_pdcch_extract_llr Start, sf->cfi = %d ============================", sf->cfi);
 
   /* Set pointers for layermapping & precoding */
   uint32_t i, nof_symbols;
@@ -508,6 +514,8 @@ int srsran_pdcch_extract_llr(srsran_pdcch_t*        q,
 
     ret = SRSRAN_SUCCESS;
   }
+  
+  ERROR("------------------------- PDCCH srsran_pdcch_extract_llr end, nof_symbols = %d ----------------------", nof_symbols);
   return ret;
 }
 

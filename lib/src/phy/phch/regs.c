@@ -214,11 +214,15 @@ int srsran_regs_pdcch_get_offset(srsran_regs_t* h,
     ERROR("Invalid CFI=%d", cfi);
     return SRSRAN_ERROR;
   }
+  DEBUG("====== [DEBUG_FINAL] CCE_loop_param: start_reg=%u, nof_regs0=%u, nof_regs1=%u, nof_regs2=%u, total_prb=%u", 
+       start_reg, h->pdcch[0].nof_regs, h->pdcch[1].nof_regs, h->pdcch[2].nof_regs, h->cell.nof_prb); 
   if (start_reg + nof_regs <= h->pdcch[cfi - 1].nof_regs) {
     uint32_t i, k;
     k = 0;
     for (i = start_reg; i < start_reg + nof_regs; i++) {
       regs_get_reg(h->pdcch[cfi - 1].regs[i], slot_symbols, &d[k], h->cell.nof_prb);
+      DEBUG("****** [DEBUG_PDC_14M] CCE_idx: %u, Base_k0: %u, PRB: %u", 
+              i, h->pdcch[cfi - 1].regs[i]->k[0], h->cell.nof_prb);
       k += 4;
     }
     return k;

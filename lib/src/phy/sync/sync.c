@@ -825,7 +825,7 @@ srsran_sync_find(srsran_sync_t* q, const cf_t* input, uint32_t find_offset, uint
       ret = SRSRAN_SYNC_NOFOUND;
     }
 
-    DEBUG("SYNC ret=%d N_id_2=%d find_offset=%d frame_len=%d, pos=%d peak=%.2f threshold=%.2f CFO=%.3f kHz",
+    DEBUG("====== SYNC ret=%d N_id_2=%d find_offset=%d frame_len=%d, pos=%d peak=%.2f threshold=%.2f CFO=%.3f kHz",
           ret,
           q->N_id_2,
           find_offset,

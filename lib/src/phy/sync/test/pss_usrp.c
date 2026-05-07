@@ -262,6 +262,12 @@ int main(int argc, char** argv)
                     3 * (SRSRAN_CP_ISNORM(cp) ? SRSRAN_CP_LEN(fft_size, SRSRAN_CP_NORM_LEN)
                                               : SRSRAN_CP_LEN(fft_size, SRSRAN_CP_EXT_LEN));
         }
+        // --- 增加的 Debug 打印 1 ---
+        printf("\n[DEBUG] PSS Peak: %d, TDD: %d, CP: %s\n", 
+               peak_idx, tdd_mode, SRSRAN_CP_ISNORM(cp) ? "Norm" : "Ext");
+        printf("[DEBUG] Calculated SSS Index: %d (Offset from PSS: %d)\n", 
+               sss_idx, peak_idx - sss_idx);
+
         if (sss_idx >= 0 && sss_idx < flen - fft_size) {
           // Filter SSS
           srsran_pss_filter(&pss, &buffer[sss_idx], &buffer[sss_idx]);
@@ -281,6 +287,18 @@ int main(int argc, char** argv)
         srsran_sss_m0m1_partial(&sss, &buffer[sss_idx], 1, NULL, &m0, &m0_value, &m1, &m1_value);
         if (srsran_sss_N_id_1(&sss, m0, m1, m1_value + m0_value) != N_id_1) {
           sss_error1++;
+        }
+
+        // --- 增加的 Debug 打印 2 ---
+        INFO("Full N_id_1: %d", srsran_sss_N_id_1(&sss, m0, m1, m1_value + m0_value));
+        srsran_sss_m0m1_partial(&sss, &buffer[sss_idx], 1, ce, &m0, &m0_value, &m1, &m1_value);
+        
+        printf("[DEBUG] Coh-Partial SSS -> m0: %d (val: %.2f), m1: %d (val: %.2f), Calc_N_id_1: %d (Target: %d)\n", 
+                m0, m0_value, m1, m1_value, 
+                srsran_sss_N_id_1(&sss, m0, m1, m1_value + m0_value), N_id_1);
+
+        if (srsran_sss_N_id_1(&sss, m0, m1, m1_value + m0_value) != N_id_1) {
+          sss_error2++;
         }
 
         // Estimate CP

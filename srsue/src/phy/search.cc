@@ -226,6 +226,8 @@ search::ret_code search::run(srsran_cell_t* cell_, std::array<uint8_t, SRSRAN_BC
       *cell_ = new_cell;
     }
 
+    fprintf(stdout, "======================== CELL_FOUND =======================\n");
+
     return CELL_FOUND;
   } else if (ret == 0) {
     Warning("SYNC:  Found PSS but could not decode PBCH");

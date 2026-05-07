@@ -274,6 +274,7 @@ uint16_t mac::get_ul_sched_rnti(uint32_t tti)
 
 uint16_t mac::get_dl_sched_rnti(uint32_t tti)
 {
+  ERROR("=================================== Start in mac::get_dl_sched_rnti ============================");
   // Priority: SI-RNTI, P-RNTI, RA-RNTI, Temp-RNTI, CRNTI
   if (si_window.is_in_window(tti)) {
     // TODO: This scheduling decision belongs to RRC

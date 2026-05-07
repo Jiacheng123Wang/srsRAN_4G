@@ -122,6 +122,8 @@ float srsran_pcfich_cfi_decode(srsran_pcfich_t* q, uint32_t* cfi)
   float max_corr = 0;
   float corr[3];
 
+  // ERROR("=================================== PHICH decode Start ============================");
+
   for (i = 0; i < 3; i++) {
     corr[i] = srsran_vec_dot_prod_fff(q->cfi_table_float[i], q->data_f, PCFICH_CFI_LEN);
     if (corr[i] > max_corr) {
@@ -133,6 +135,9 @@ float srsran_pcfich_cfi_decode(srsran_pcfich_t* q, uint32_t* cfi)
   if (cfi) {
     *cfi = index + 1;
   }
+
+  ERROR("=================================== PHICH decode End, CFI = %d ============================", *cfi);
+
   return max_corr;
 }
 
@@ -212,11 +217,14 @@ int srsran_pcfich_decode(srsran_pcfich_t*       q,
 
     /* decode CFI */
     float corr = srsran_pcfich_cfi_decode(q, &sf->cfi);
+    ERROR("=================================== srsran_pcfich_cfi_decode End, CFI = %d ============================", sf->cfi);
+
     if (corr_result) {
       *corr_result = corr;
     }
     return 1;
   } else {
+
     return SRSRAN_ERROR_INVALID_INPUTS;
   }
 }

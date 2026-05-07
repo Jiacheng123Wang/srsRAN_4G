@@ -127,6 +127,11 @@ void bc_sched::alloc_sibs(sf_sched* tti_sched)
         ret = alloc_result::no_sch_space;
         break;
       }
+      logger.debug("MAC_DEBUG: Attempting SIB allocation: idx=%d, len=%d, ntx=%d, nrbgs=%d",
+                     sib_idx,
+                     cc_cfg->cfg.sibs[sib_idx].get_length(),
+                     pending_sibs[sib_idx].n_tx,
+                     nrbgs);
       ret = tti_sched->alloc_sib(bc_aggr_level, sib_idx, pending_sibs[sib_idx].n_tx, rbg_interv);
       if (ret == alloc_result::success) {
         // SIB scheduled successfully
@@ -134,6 +139,12 @@ void bc_sched::alloc_sibs(sf_sched* tti_sched)
       }
     }
     if (ret != alloc_result::success) {
+      // --- INSTRUMENTATION START ---
+      logger.info("MAC_DEBUG: SIB Allocation Attempt: idx=%d, len=%d, ret=%s",
+                     sib_idx,
+                     cc_cfg->cfg.sibs[sib_idx].get_length(),
+                     to_string(ret));
+      // --- INSTRUMENTATION END ---
       logger.error("SCHED: Could not allocate SI message, idx=%d, len=%d. Cause: %s",
                      sib_idx,
                      cc_cfg->cfg.sibs[sib_idx].get_length(),

@@ -167,7 +167,15 @@ int srsran_ue_mib_decode(srsran_ue_mib_t* q,
     INFO("MIB not decoded: %u, snr=%.1f dB", q->frame_cnt, q->chest_res.snr_db);
     q->frame_cnt++;
   }
-
+  DEBUG ("============================== MIB decod end ================================\n");
+  if (ret == 1) {
+      DEBUG("[TRACK-MIB] SUCCESS: SNR=%.1f dB\n", 
+             q->chest_res.snr_db);
+  } else {
+      // 观察 SNR 是否过低导致无法解码
+      DEBUG("[TRACK-MIB] TRYING: Frame_Cnt=%u, Current_SNR=%.1f dB\n", 
+            q->frame_cnt, q->chest_res.snr_db);
+  }
   return ret;
 }
 

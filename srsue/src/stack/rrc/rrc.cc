@@ -79,7 +79,12 @@ rrc::rrc(stack_interface_rrc* stack_, srsran::task_sched_handle task_sched_) :
   conn_recfg_proc(this),
   meas_cells_nr(task_sched_),
   meas_cells(task_sched_)
-{}
+{
+  //throw std::runtime_error("FORCE CRASH: If you see this, my code is running!");
+  std::cerr << "\n################################################" << std::endl;
+  std::cerr << "## [DEBUG] RRC CONSTRUCTOR EXECUTED SUCCESSFULLY ##" << std::endl;
+  std::cerr << "################################################\n" << std::endl;
+}
 
 rrc::~rrc() = default;
 
@@ -208,6 +213,7 @@ bool rrc::is_connected()
  */
 void rrc::run_tti()
 {
+  logger.error("RRC TTI is running, current state: %d", (int)state);
   if (!initiated) {
     return;
   }
@@ -269,6 +275,12 @@ void rrc::run_tti()
   if (cell_clean_cnt == 1000) {
     meas_cells.clean_neighbours();
     cell_clean_cnt = 0;
+  }
+
+  if (state != last_state) {
+    // srsRAN 4G 中通常使用专门的 text 转换函数或直接打印枚举值
+    logger.info("RRC State transition: %d -> %d", (int)last_state, (int)state);
+    last_state = state; 
   }
 }
 
@@ -335,6 +347,11 @@ bool rrc::connection_request(srsran::establishment_cause_t cause, srsran::unique
     return false;
   }
   callback_list.add_proc(conn_req_proc);
+
+  uint32_t t300_val_ms = 1000; // 示例值，实际应从 SIB 动态获取
+  
+  logger.info("Starting T300 for RRC Connection Request");
+  
   return true;
 }
 
@@ -492,6 +509,10 @@ void rrc::out_of_sync()
                     t311.is_running() ? "running" : "stop",
                     t310.is_running() ? "running" : "stop");
         n310_cnt++;
+
+        // NEW: 打印同步失败计数器和当前 RSRP（假设已获取测量结果）
+        logger.warning("PHY Out-of-Sync detected (count: %d, max: %d)", n310_cnt, N310);
+
         if (n310_cnt == N310) {
           logger.info(
               "Detected %d out-of-sync from PHY. Trying to resync. Starting T310 timer %d ms", N310, t310.duration());
@@ -765,6 +786,12 @@ void rrc::timer_expired(uint32_t timeout_id)
     ho_failed();
   } else {
     logger.error("Timeout from unknown timer id %d", timeout_id);
+  }
+  // NEW: 统一记录超时事件，便于回溯掉线原因
+  if (timeout_id == t300.id()) {
+    logger.error("Timer T300 expired: Connection establishment failed.");
+  } else if (timeout_id == t310.id()) {
+    logger.error("Timer T310 expired: Radio Link Failure.");
   }
 }
 
@@ -1387,6 +1414,7 @@ static unsigned get_sib_number(const asn1::rrc::sib_info_item_c::types& sib)
 
 void rrc::parse_pdu_bcch_dlsch(unique_byte_buffer_t pdu)
 {
+  ERROR("[TRACK-RRC] Received SIB PDU");
   // Stop BCCH search after successful reception of 1 BCCH block
   mac->bcch_stop_rx();
 
@@ -1469,6 +1497,8 @@ void rrc::handle_sib1()
 void rrc::handle_sib2()
 {
   logger.info("SIB2 received");
+
+  ERROR("[TRACK-RRC] SIB2 Parsed! RACH Config is now available.");
 
   const sib_type2_s* sib2 = meas_cells.serving_cell().sib2ptr();
 

@@ -1,0 +1,3 @@
+[submodule "srsgui"]
+	path = srsgui
+	url = https://github.com/srsran/srsgui.git

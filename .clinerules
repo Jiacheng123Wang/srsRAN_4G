@@ -1,0 +1,28 @@
+Always read the files in memory_bank/ at the start of a new task to get context. Update activeContext.md after every significant change to the project.
+
+如果遇到复杂逻辑，优先输出文字分析，而不是一次性调用多个工具。
+
+当涉及 LTE 物理层开发时，请遵循以下检索逻辑：
+如果涉及 CRC、Turbo 编码或 Rate Matching，检索 36.212。
+如果涉及下行信号（PSS/SSS/RS）的序列生成或资源映射，检索 36.211。
+如果涉及 HARQ 进程、功率控制或随机接入过程，检索 36.213。
+在给出任何代码修改建议前，必须通过 MCP 检索对应的章节并引用原文。
+
+# 其他有关LTE上层协议栈
+- 36.231是有关：Medium Access Control (MAC) protocol specification。
+- 36.331是有关：Radio Resource Control (RRC) Protocol specification
+
+# 3GPP Specification Knowledge Base Rules
+- 当涉及物理层参数、序列生成或信道映射逻辑时，必须参考 `/home/jwang/work/docs/spec/3GPP/` 下的 Markdown 文件。
+- **重要：** 忽略本地 Markdown 文件在预览模式下的 KaTeX/渲染报错。这些错误是由于预览引擎不兼容复杂的 3GPP LaTeX 语法导致的。
+- 你在读取这些文件时，应直接解析其 LaTeX 源码逻辑（例如 Gold 序列生成、资源格映射公式），源码中的数学逻辑通常是准确的。
+- 如果发现公式中存在明显的括号不匹配（如 \left 无 \right），请结合 3GPP 协议的上下文逻辑进行推断，或请求我提供原始 PDF 截图，也可以参考在`/home/jwang/work/docs/pdf/`下的PDF文件。
+
+# Performance Optimization for Large Specs
+- **禁止通读：** 禁止直接对超过 1MB 的协议文件使用 `read_file`。
+- **先搜后读：** 必须先使用 `grep -n` 或搜索工具定位关键字（如 "7.2" 或 "Pseudo-random sequence"）。
+- **精准提取：** 定位到行号后，使用工具仅读取目标章节前后的 200-500 行内容。
+- **并行任务：** 在处理复杂公式时，优先提取 LaTeX 源码到临时文件，再进行逻辑分析。
+
+# 核心禁令
+- **只有在用户的明确要求下才能修改项目文件，并且在修改之前把未修改的文件保留备份！**

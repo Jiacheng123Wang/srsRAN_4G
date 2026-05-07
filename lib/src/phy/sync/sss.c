@@ -150,7 +150,17 @@ int srsran_sss_N_id_1(srsran_sss_t* q, uint32_t m0, uint32_t m1, float corr)
         N_id_1 = q->N_id_1_table[m1][m0 - 1];
       }
     }
+  // // --- 【增加的 Debug 打印：检测成功】 ---
+  //   printf("\n ====== [DEBUG-SSS] SSS MATCH! corr=%.2f (threshold=%.2f), m0=%d, m1=%d, Calculated N_id_1=%d\n", 
+  //          corr, q->corr_peak_threshold, m0, m1, N_id_1);  
   }
+  // else {
+  //   // --- 【增加的 Debug 打印：检测失败】 ---
+  //   // 为了防止刷屏，你可以只打印相关性较高的“疑似”信号，或者先注释掉这一段
+  //   if (corr > q->corr_peak_threshold * 0.5) { // 只打印达到门限一半以上的
+  //      printf("====== [DEBUG-SSS] SSS MISSED: corr=%.2f (threshold=%.2f)\n", corr, q->corr_peak_threshold);
+  //   }
+  // }
 
   return N_id_1;
 }

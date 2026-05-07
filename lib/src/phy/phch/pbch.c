@@ -494,6 +494,8 @@ int srsran_pbch_decode(srsran_pbch_t*         q,
       nant = q->cell.nof_ports;
     }
 
+    // printf("================ nant = %d ===================\n", nant);
+
     do {
       if (nant != 3) {
         DEBUG("Trying %d TX antennas with %d frames", nant, frame_idx);

@@ -1016,7 +1016,7 @@ int sync::radio_recv_fnc(srsran::rf_buffer_t& data, srsran_timestamp_t* rx_time)
     }
   }
 
-  phy_logger.debug("SYNC:  received %d samples from radio", data.get_nof_samples());
+  phy_logger.debug("----------- SYNC:  received %d samples from radio ----------- ", data.get_nof_samples());
 
   return data.get_nof_samples();
 }
