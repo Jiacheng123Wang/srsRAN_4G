@@ -22,9 +22,11 @@ srsRAN_4G is a high-performance, open-source implementation of the LTE and NR pr
 ## 2. Remote Compilation & Execution Environment (New Information)
 The project requires compilation on an Ubuntu system, as the current machine is macOS. A remote Ubuntu machine named `nuc5GC` is available for this purpose.
 
-**Machine Details**:
+**Remote Machine Details**:
+- **Hostname**: `nuc5GC`
 - **OS**: Ubuntu
 - **Code Repository Path**: `~/work/srsRAN_4G`
+- **Access Command**: `ssh nuc5GC`
 - **Startup Command (EPC/eNB)**: `~/work/srsRAN_4G/start_epc_enb.sh`
 - **Shutdown Command (EPC/eNB)**: `~/work/srsRAN_4G/stop_epc_enb.sh`
 - **Recompile Command (Full Project)**: `~/work/srsRAN_4G/compile_epc_enb.sh`

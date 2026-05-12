@@ -1,13 +1,20 @@
 # 总体目标
-诊断并修复 srsRAN_4G eNB 的 MAC 层资源分配错误。
-**核心错误特征**：`SCHED: Could not allocate SI message... Cause: Effective coderate exceeds threshold`。
+在远程节点 `nuc5GC` 上诊断并修复 srsRAN_4G eNB 的 MAC 层资源分配错误。
+**核心错误特征**：`qCould not allocate SI message... Cause: Effective coderate exceeds threshold`。
+
+# 重点注意事项
+1. 本机是macOS系统，不要试图在本机上执行任何操作
+2. 远程节点机器 `nuc5GC`ubuntu系统的有关登入，项目执行编译、运行 EPC/eNB的请从`activeContext.md` 文件中读取并理解
+3. 只对srsRAN_4G的源代码的修改才可以进行写入操作，不要进行任何其他的写入操作（也不要安装任何工具）
+4. 编译、运行 EPC/eNB、停止进程都已经是shell cripts，并且经验证是可以运行，不要应用系统级的build工具如cmake，make等。
+
 
 # 执行规则 (Strict Rules for Agent)
 1. 严格按照以下 Phase 和步骤顺序执行，不得跳过。
 2. 每次修改代码后，必须记录修改位置。
 3. 遇到达到上限的重试次数（如编译失败 5 次，或探查失败 5 次），必须立即停止并使用 `ask_user` 工具或直接在聊天中请求用户介入，绝对禁止无限循环。
-4. 只对srsRAN_4G的源代码的修改才可以进行写入操作，不要进行任何其他的写入操作（也不要安装任何工具）
-5. 编译、运行 EPC/eNB、停止进程都已经是shell cripts，并且经过验证是可以运行，不要应用系统级的build工具如cmake，make等。
+4. 执行远程命令请通过标准的 ssh 工具进行，远程机器`nuc5GC`上也安装有tmux。
+
 ---
 
 ## 🟢 Phase 1: 环境上下文加载
