@@ -221,8 +221,13 @@ int srsran_regs_pdcch_get_offset(srsran_regs_t* h,
     k = 0;
     for (i = start_reg; i < start_reg + nof_regs; i++) {
       regs_get_reg(h->pdcch[cfi - 1].regs[i], slot_symbols, &d[k], h->cell.nof_prb);
-      DEBUG("****** [DEBUG_PDC_14M] CCE_idx: %u, Base_k0: %u, PRB: %u", 
-              i, h->pdcch[cfi - 1].regs[i]->k[0], h->cell.nof_prb);
+  //    DEBUG("****** [DEBUG_PDC_14M] CCE_idx: %u, Base_k0: %u, PRB: %u", 
+  //            i, h->pdcch[cfi - 1].regs[i]->k[0], h->cell.nof_prb);
+
+      DEBUG("****** [DEBUG_PDC_14M] CCE_idx: %u, Base_k0: %u, PRB: %u, REs: (k:%u,l:%u), (k:%u,l:%u), (k:%u,l:%u), (k:%u,l:%u)", 
+              i, h->pdcch[cfi - 1].regs[i]->k[0], h->cell.nof_prb, 
+              h->pdcch[cfi - 1].regs[i]->k[0], h->pdcch[cfi - 1].regs[i]->l, h->pdcch[cfi - 1].regs[i]->k[1], h->pdcch[cfi - 1].regs[i]->l, h->pdcch[cfi - 1].regs[i]->k[2], h->pdcch[cfi - 1].regs[i]->l, h->pdcch[cfi - 1].regs[i]->k[3], h->pdcch[cfi - 1].regs[i]->l);
+
       k += 4;
     }
     return k;
@@ -520,6 +525,7 @@ int regs_pcfich_init(srsran_regs_t* h)
       return SRSRAN_ERROR;
     } else {
       ch->regs[i]->assigned = true;
+      // printf("[DEBUG_PCFICH] REG index: %u, RE index (k): %u, Symbol index (l): 0\n", i, k);
       DEBUG("Assigned PCFICH REG#%d (%d,0)", i, k);
     }
   }
@@ -548,9 +554,13 @@ int srsran_regs_pcfich_put(srsran_regs_t* h, cf_t symbols[REGS_PCFICH_NSYM], cf_
 {
   srsran_regs_ch_t* rch = &h->pcfich;
 
+  printf("====== Putting PCFICH symbols. CellID: %d, PRB: %d, REGS_PCFICH_NSYM = %d \n", h->cell.id, h->cell.nof_prb, REGS_PCFICH_NSYM);
+  printf("====== nof_regs = %d \n", h->pcfich.nof_regs);
+
   uint32_t i;
   for (i = 0; i < rch->nof_regs && i * REGS_RE_X_REG < REGS_PCFICH_NSYM; i++) {
     regs_put_reg(rch->regs[i], &symbols[i * REGS_RE_X_REG], slot_symbols, h->cell.nof_prb);
+    printf("****** [DEBUG_PCF_14M] REG_idx: %u, Base_k0: %u, Base_k1: %u, Base_k2: %u, Base_k3: %u, PRB: %u \n", i, rch->regs[i]->k[0], rch->regs[i]->k[1], rch->regs[i]->k[2], rch->regs[i]->k[3], h->cell.nof_prb);
   }
   return i * REGS_RE_X_REG;
 }

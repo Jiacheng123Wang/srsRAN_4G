@@ -136,7 +136,7 @@ float srsran_pcfich_cfi_decode(srsran_pcfich_t* q, uint32_t* cfi)
     *cfi = index + 1;
   }
 
-  ERROR("=================================== PHICH decode End, CFI = %d ============================", *cfi);
+  //ERROR("=================================== PHICH decode End, CFI = %d, corr = %f, %f, %f ============================", *cfi, corr[0], corr[1], corr[2]);
 
   return max_corr;
 }
@@ -167,6 +167,9 @@ int srsran_pcfich_decode(srsran_pcfich_t*       q,
   /* Set pointers for layermapping & precoding */
   int   i;
   cf_t* x[SRSRAN_MAX_LAYERS];
+  //printf("q->regs->pcfich_res->nof_regs = %d \n", q->regs->pcfich_res->nof_regs);
+  //printf("q->cell.id = %d \n", q->cell.id);
+  //printf("q->cell.nof_prb = %d \n", q->cell.nof_prb);
 
   if (q != NULL && sf_symbols != NULL) {
     uint32_t sf_idx = sf->tti % 10;
