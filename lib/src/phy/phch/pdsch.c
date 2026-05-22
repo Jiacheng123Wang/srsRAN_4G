@@ -676,7 +676,7 @@ static int srsran_pdsch_codeword_decode(srsran_pdsch_t*     q,
   int ret = SRSRAN_ERROR_INVALID_INPUTS;
 
   if (softbuffer && data && ack && cfg->grant.tb[tb_idx].nof_bits && cfg->grant.nof_re) {
-    INFO("Decoding PDSCH SF: %d (CW%d -> TB%d), Mod %s, NofBits: %d, NofSymbols: %d, NofBitsE: %d, rv_idx: %d",
+    INFO(": %d (CW%d -> TB%d), Mod %s, NofBits: %d, NofSymbols: %d, NofBitsE: %d, rv_idx: %d",
          sf->tti % 10,
          codeword_idx,
          tb_idx,
@@ -826,6 +826,10 @@ int srsran_pdsch_decode(srsran_pdsch_t*        q,
          srsran_mod_string(cfg->grant.tb[0].mod),
          cfg->grant.nof_layers,
          nof_tb);
+    INFO("=========================== NofBits = %d, MCS = %d, RV = %d ===========================",
+         cfg->grant.tb[0].nof_bits,
+         cfg->grant.tb[0].mcs_idx,
+         cfg->grant.tb[0].rv);
 
     // Extract Symbols and Channel Estimates
     uint32_t lstart = SRSRAN_NOF_CTRL_SYMBOLS(q->cell, sf->cfi);

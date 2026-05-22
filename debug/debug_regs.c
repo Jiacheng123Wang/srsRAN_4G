@@ -175,19 +175,19 @@ int regs_pdcch_init(srsran_regs_t* h) {
 
         m = 0;
         for (i = 0; i < h->nof_regs; i++) {
-            if (h->regs[i].l < nof_ctrl_symbols && !h->regs[i].assigned) {
-                tmp[m] = &h->regs[i];
-                m++;
-            }
+        if (h->regs[i].l < nof_ctrl_symbols && !h->regs[i].assigned) {
+            tmp[m] = &h->regs[i];
+            m++;
+        }
         }
 
         h->pdcch[cfi].nof_regs = m;
-        h->pdcch[cfi].regs = malloc(sizeof(srsran_regs_reg_t*) * h->pdcch[cfi].nof_regs);
-        if (!h->pdcch[cfi].regs) {
-            perror("malloc");
-            goto clean_and_exit;
-        }
-
+            h->pdcch[cfi].regs = malloc(sizeof(srsran_regs_reg_t*) * h->pdcch[cfi].nof_regs);
+            if (!h->pdcch[cfi].regs) {
+                perror("malloc");
+                goto clean_and_exit;
+            }
+    printf("Init PDCCH REG space: h->pdcch[0].nof_regs = %d, h->pdcch[1].nof_regs = %d, h->pdcch[2].nof_regs = %d, \n", h->pdcch[0].nof_regs, h->pdcch[1].nof_regs, h->pdcch[2].nof_regs);
         nrows  = (h->pdcch[cfi].nof_regs - 1) / PDCCH_NCOLS + 1;
         ndummy = PDCCH_NCOLS * nrows - h->pdcch[cfi].nof_regs;
         if (ndummy < 0) ndummy = 0;
