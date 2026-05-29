@@ -26,25 +26,25 @@
 #include "srsran/support/srsran_test.h"
 #include <getopt.h>
 
-#define UE_CRNTI 0x1234
+#define UE_CRNTI 0xffff
 
 static int test_pdcch_orders()
 {
   static srsran_cell_t cell = {
-      52,                // nof_prb
+      6,                // nof_prb
       1,                 // nof_ports
-      0,                 // cell_id
+      150,                 // cell_id
       SRSRAN_CP_NORM,    // cyclic prefix
       SRSRAN_PHICH_NORM, // PHICH length
-      SRSRAN_PHICH_R_1,  // PHICH resources
-      SRSRAN_FDD,
+      SRSRAN_PHICH_R_1_6,  // PHICH resources
+      SRSRAN_TDD,
   };
 
   srsran_dl_sf_cfg_t dl_sf;
   ZERO_OBJECT(dl_sf);
 
   srsran_dci_location_t locations[SRSRAN_NOF_SF_X_FRAME][30];
-  static uint32_t       cfi = 2;
+  static uint32_t       cfi = 3;
 
   static srsran_pdcch_t pdcch;
   static srsran_regs_t  regs;
@@ -73,8 +73,8 @@ static int test_pdcch_orders()
   srsran_dci_dl_t dci_tx;
   bzero(&dci_tx, sizeof(srsran_dci_dl_t));
   dci_tx.rnti           = UE_CRNTI;
-  dci_tx.location       = locations[1][0];
-  dci_tx.format         = SRSRAN_DCI_FORMAT1A;
+  dci_tx.location       = locations[5][0];
+  dci_tx.format         = SRSRAN_DCI_FORMAT1C;
   dci_tx.cif_present    = false;
   dci_tx.is_pdcch_order = true;
   dci_tx.preamble_idx   = 0;
@@ -86,10 +86,18 @@ static int test_pdcch_orders()
 
   // Pack
   srsran_dci_msg_t dci_msg = {};
+  dci_tx.alloc_type = SRSRAN_RA_ALLOC_TYPE2;
+  dci_tx.type2_alloc.mode = SRSRAN_RA_TYPE2_DIST;
   TESTASSERT(srsran_dci_msg_pack_pdsch(&cell, &dl_sf, &cfg, &dci_tx, &dci_msg) == SRSRAN_SUCCESS);
+  printf("======= Number of bits: %d\n", dci_msg.nof_bits);
+  for (int i = 0; i < dci_msg.nof_bits; i++) {
+    printf("%d", dci_msg.payload[i]);
+  }
+  printf("\n");
 
   // Unpack
   srsran_dci_dl_t dci_rx = {};
+  dci_rx.alloc_type = SRSRAN_RA_ALLOC_TYPE2;
   TESTASSERT(srsran_dci_msg_unpack_pdsch(&cell, &dl_sf, &cfg, &dci_msg, &dci_rx) == SRSRAN_SUCCESS);
 
   // To string

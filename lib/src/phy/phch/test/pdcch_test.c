@@ -28,12 +28,12 @@
 #include "srsran/srsran.h"
 
 // Test parameters
-static uint32_t         pci         = 1;
+static uint32_t         pci         = 150;
 static uint16_t         rnti        = 0x46;
-static uint32_t         cfi         = 2;
+static uint32_t         cfi         = 3;
 static uint32_t         nof_ports   = 1;
 static srsran_dci_cfg_t dci_cfg     = {};
-static uint32_t         nof_prb     = 100;
+static uint32_t         nof_prb     = 6;
 static float            snr_dB      = NAN;
 static uint32_t         repetitions = 1;
 static bool             false_check = false;
@@ -191,6 +191,13 @@ static float get_snr_dB(uint32_t L)
 static int test_case1()
 {
   uint32_t nof_re = SRSRAN_NOF_RE(pdcch_tx.cell);
+  printf("Testing PDCCH decoding for PCI=%d, RNTI=0x%04x, CFI=%d, nof_ports=%d, nof_prb=%d, nof_re=%d\n",
+         pci,
+         rnti,
+         cfi,
+         nof_ports,
+         nof_prb,
+         nof_re);
 
   // Iterate all possible subframes
   for (uint32_t f_idx = 0; formats[f_idx] != SRSRAN_DCI_NOF_FORMATS; f_idx++) {
@@ -361,8 +368,9 @@ int main(int argc, char** argv)
   cell.nof_prb         = nof_prb;
   cell.nof_ports       = nof_ports;
   cell.cp              = SRSRAN_CP_NORM;
-  cell.phich_resources = SRSRAN_PHICH_R_1;
+  cell.phich_resources = SRSRAN_PHICH_R_1_6;
   cell.phich_length    = SRSRAN_PHICH_NORM;
+  cell.id              = pci;
 
   // Initialise channel estimates with identity matrix
   if (srsran_chest_dl_res_init(&chest_dl_res, cell.nof_prb) < SRSRAN_SUCCESS) {
@@ -385,7 +393,31 @@ int main(int argc, char** argv)
     ERROR("Error initiating regs");
     goto quit;
   }
-
+/*
+  printf("nof_regs: %d\n", regs.nof_regs);
+  for (i = 0; i < 3; i++) {
+    printf("============================ cfi = %d, ===================================\n\n", i);
+    printf("****** regs.pcfich.nof_regs = %d\n", regs.pcfich.nof_regs);
+    for (uint32_t j = 0; j < regs.pcfich.nof_regs; j++) {
+      printf("iREG = %d: iSym = %d, iCarrStart = %d, iCarr0 = %d, iCarr1 = %d, iCarr2 = %d, iCarr3 = %d\n", 
+        j, regs.pcfich.regs[j]->l, regs.pcfich.regs[j]->k0, 
+        regs.pcfich.regs[j]->k[0], regs.pcfich.regs[j]->k[1], regs.pcfich.regs[j]->k[2], regs.pcfich.regs[j]->k[3]);
+    }
+    printf("****** regs.phich.nof_regs = %d\n", regs.phich->nof_regs);
+    for (uint32_t j = 0; j < regs.phich->nof_regs; j++) {
+      printf("iREG = %d: iSym = %d, iCarrStart = %d, iCarr0 = %d, iCarr1 = %d, iCarr2 = %d, iCarr3 = %d\n", 
+        j, regs.phich->regs[j]->l, regs.phich->regs[j]->k0, 
+        regs.phich->regs[j]->k[0], regs.phich->regs[j]->k[1], regs.phich->regs[j]->k[2], regs.phich->regs[j]->k[3]);
+    }
+    uint32_t ij = 2;
+    printf("****** regs.pdcch[%d].nof_regs = %d\n", ij, regs.pdcch[ij].nof_regs);
+    for (uint32_t j = 0; j < regs.pdcch[ij].nof_regs; j++) {
+      printf("iREG = %d: iSym = %d, iCarrStart = %d, iCarr0 = %d, iCarr1 = %d, iCarr2 = %d, iCarr3 = %d\n", 
+        j, regs.pdcch[ij].regs[j]->l, regs.pdcch[ij].regs[j]->k0, 
+        regs.pdcch[ij].regs[j]->k[0], regs.pdcch[ij].regs[j]->k[1], regs.pdcch[ij].regs[j]->k[2], regs.pdcch[ij].regs[j]->k[3]);
+    }
+  }
+*/
   if (srsran_pdcch_init_enb(&pdcch_tx, cell.nof_prb)) {
     ERROR("Error creating PDCCH object");
     goto quit;
@@ -395,6 +427,19 @@ int main(int argc, char** argv)
     goto quit;
   }
 
+  printf("PDCCH REGs initialized for cell with %d PRBs and %d ports\n", cell.nof_prb, cell.nof_ports);  
+  printf("pdcch_tx.cell-> %d PRBs and %d ports\n", pdcch_tx.cell.nof_prb, pdcch_tx.cell.nof_ports);  
+
+  return(1);
+/*
+  printf("pdcch_tx.regs.nof_regs = %d\n", pdcch_tx.regs->nof_regs);
+  for (uint32_t j = 0; j < pdcch_tx.regs->nof_regs; j++) {
+    printf("iREG = %d: iSym = %d, iCarrStart = %d, iCarr0 = %d, iCarr1 = %d, iCarr2 = %d, iCarr3 = %d\n", 
+      j, pdcch_tx.regs->regs[j].l, pdcch_tx.regs->regs[j].k0, 
+      pdcch_tx.regs->regs[j].k[0], pdcch_tx.regs->regs[j].k[1], pdcch_tx.regs->regs[j].k[2], pdcch_tx.regs->regs[j].k[3]);
+  }
+*/
+  
   if (srsran_pdcch_init_ue(&pdcch_rx, cell.nof_prb, nof_ports)) {
     ERROR("Error creating PDCCH object");
     goto quit;

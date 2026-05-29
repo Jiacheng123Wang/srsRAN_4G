@@ -185,6 +185,8 @@ int srsran_pdcch_set_cell(srsran_pdcch_t* q, srsran_regs_t* regs, srsran_cell_t 
 {
   int ret = SRSRAN_ERROR_INVALID_INPUTS;
 
+  //printf("1, ========= PDCCH:nregs for CFI 1: %d, CFI 2: %d, CFI 3: %d\n", q->nof_regs[0], q->nof_regs[1], q->nof_regs[2]);
+
   if (q != NULL && regs != NULL && srsran_cell_isvalid(&cell)) {
     srsran_pdcch_set_regs(q, regs);
 
@@ -192,6 +194,8 @@ int srsran_pdcch_set_cell(srsran_pdcch_t* q, srsran_regs_t* regs, srsran_cell_t 
 
     if (q->cell.id != cell.id || q->cell.nof_prb == 0) {
       q->cell = cell;
+
+      //printf("2, ========= PDCCH:nregs for CFI 1: %d, CFI 2: %d, CFI 3: %d\n", q->nof_regs[0], q->nof_regs[1], q->nof_regs[2]);
 
       for (int i = 0; i < SRSRAN_NOF_SF_X_FRAME; i++) {
         // we need to pregenerate the sequence for the maximum number of bits, which is 8 times
@@ -307,6 +311,7 @@ uint32_t srsran_pdcch_common_locations_ncce(uint32_t nof_cce, srsran_dci_locatio
 {
   uint32_t i, l, L, k;
 
+  //printf("Computing common search space candidates for nof_cce=%d, max_candidates=%d\n", nof_cce, max_candidates);
   k = 0;
   for (l = 2; l <= 3; l++) {
     L = (1 << l);
@@ -318,7 +323,7 @@ uint32_t srsran_pdcch_common_locations_ncce(uint32_t nof_cce, srsran_dci_locatio
         c[k].L    = l;
         c[k].ncce = ncce;
         DEBUG("Common SS Candidate %d: nCCE: %d/%d, L: %d", k, c[k].ncce, nof_cce, c[k].L);
-        ERROR("[TRACK-PDCCH] Common SS Candidate %d: nCCE=%d, L=%d, TotalCCE=%d", k, ncce, L, nof_cce);
+        //ERROR("[TRACK-PDCCH] Common SS Candidate %d: nCCE=%d, L=%d, TotalCCE=%d", k, ncce, L, nof_cce);
         k++;
       }
     }
@@ -340,7 +345,7 @@ int srsran_pdcch_dci_decode(srsran_pdcch_t* q, float* e, uint8_t* data, uint32_t
   uint16_t p_bits, crc_res;
   uint8_t* x;
 
-  ERROR("************************************* PDCCH Decode Start *************************************");
+  // ERROR("************************************* PDCCH Decode Start *************************************");
 
   if (q != NULL) {
     if (data != NULL && E <= q->max_bits && nof_bits <= SRSRAN_DCI_MAX_BITS) {
@@ -380,7 +385,7 @@ int srsran_pdcch_dci_decode(srsran_pdcch_t* q, float* e, uint8_t* data, uint32_t
  */
 int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dci_cfg_t* dci_cfg, srsran_dci_msg_t* msg)
 {
-  ERROR("=================================== PDCCH MSG Start ============================");
+  //ERROR("=================================== PDCCH MSG Start ============================");
 
   int ret = SRSRAN_ERROR_INVALID_INPUTS;
   if (q != NULL && msg != NULL && srsran_dci_location_isvalid(&msg->location)) {
@@ -398,6 +403,8 @@ int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dc
         mean += fabsf(q->llr[msg->location.ncce * 72 + i]);
       }
       mean /= e_bits;
+
+      INFO("========== e_bits: %d, nof_bits: %d, mean: %f\n", e_bits, nof_bits, mean);
 
       if (mean > 0.2f) {
         ret = srsran_pdcch_dci_decode(q, &q->llr[msg->location.ncce * 72], msg->payload, e_bits, nof_bits, &msg->rnti);
@@ -457,7 +464,7 @@ int srsran_pdcch_extract_llr(srsran_pdcch_t*        q,
                              cf_t*                  sf_symbols[SRSRAN_MAX_PORTS])
 {
   int ret = SRSRAN_ERROR_INVALID_INPUTS;
-  ERROR("=================================== PDCCH srsran_pdcch_extract_llr Start, sf->cfi = %d ============================", sf->cfi);
+  // ERROR("=================================== PDCCH srsran_pdcch_extract_llr Start, sf->cfi = %d ============================", sf->cfi);
 
   /* Set pointers for layermapping & precoding */
   uint32_t i, nof_symbols;
@@ -515,7 +522,7 @@ int srsran_pdcch_extract_llr(srsran_pdcch_t*        q,
     ret = SRSRAN_SUCCESS;
   }
   
-  ERROR("------------------------- PDCCH srsran_pdcch_extract_llr end, nof_symbols = %d ----------------------", nof_symbols);
+  //ERROR("------------------------- PDCCH srsran_pdcch_extract_llr end, nof_symbols = %d ----------------------", nof_symbols);
   return ret;
 }
 

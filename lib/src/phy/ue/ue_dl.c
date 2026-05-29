@@ -422,6 +422,11 @@ static int dci_blind_search(srsran_ue_dl_t*     q,
                             bool                search_in_common)
 {
   uint32_t nof_dci = 0;
+  // printf("Blind searching DCI for RNTI %d in %d locations and %d formats, search_in_common = %d\n",
+  //        rnti,
+  //        search_space->nof_locations,
+  //        search_space->nof_formats,
+  //        search_in_common);
   if (rnti) {
     for (int l = 0; l < search_space->nof_locations; l++) {
       if (nof_dci >= SRSRAN_MAX_DCI_MSG) {
@@ -1469,6 +1474,8 @@ int srsran_ue_dl_find_and_decode(srsran_ue_dl_t*     q,
       ERROR("Error unpacking DCI");
       return SRSRAN_ERROR;
     }
+    INFO("========================== PDSCH grant: nof_re=%d, mcs_idx=%d, rv=%d", pdsch_cfg->grant.nof_re, pdsch_cfg->grant.tb[0].mcs_idx,
+         pdsch_cfg->grant.tb[0].rv);
 
     // Calculate RV if not provided in the grant and reset softbuffer
     for (int i = 0; i < SRSRAN_MAX_CODEWORDS; i++) {

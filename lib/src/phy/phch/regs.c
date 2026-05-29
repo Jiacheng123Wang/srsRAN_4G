@@ -80,6 +80,8 @@ int regs_pdcch_init(srsran_regs_t* h)
       nof_ctrl_symbols = cfi + 1;
     }
 
+    //printf("======  nof_regs: %d \n", h->nof_regs);
+
     tmp = malloc(sizeof(srsran_regs_reg_t*) * h->nof_regs);
     if (!tmp) {
       perror("malloc");
@@ -102,6 +104,8 @@ int regs_pdcch_init(srsran_regs_t* h)
       perror("malloc");
       goto clean_and_exit;
     }
+
+    //printf("Init PDCCH REG space: h->pdcch[0].nof_regs = %d, h->pdcch[1].nof_regs = %d, h->pdcch[2].nof_regs = %d, \n", h->pdcch[0].nof_regs, h->pdcch[1].nof_regs, h->pdcch[2].nof_regs);
 
     /* Interleave REGs */
     nrows  = (h->pdcch[cfi].nof_regs - 1) / PDCCH_NCOLS + 1;
@@ -219,17 +223,28 @@ int srsran_regs_pdcch_get_offset(srsran_regs_t* h,
   if (start_reg + nof_regs <= h->pdcch[cfi - 1].nof_regs) {
     uint32_t i, k;
     k = 0;
+    INFO("========================= PDCCH ==============================");
     for (i = start_reg; i < start_reg + nof_regs; i++) {
       regs_get_reg(h->pdcch[cfi - 1].regs[i], slot_symbols, &d[k], h->cell.nof_prb);
-  //    DEBUG("****** [DEBUG_PDC_14M] CCE_idx: %u, Base_k0: %u, PRB: %u", 
-  //            i, h->pdcch[cfi - 1].regs[i]->k[0], h->cell.nof_prb);
 
-      DEBUG("****** [DEBUG_PDC_14M] CCE_idx: %u, Base_k0: %u, PRB: %u, REs: (k:%u,l:%u), (k:%u,l:%u), (k:%u,l:%u), (k:%u,l:%u)", 
-              i, h->pdcch[cfi - 1].regs[i]->k[0], h->cell.nof_prb, 
-              h->pdcch[cfi - 1].regs[i]->k[0], h->pdcch[cfi - 1].regs[i]->l, h->pdcch[cfi - 1].regs[i]->k[1], h->pdcch[cfi - 1].regs[i]->l, h->pdcch[cfi - 1].regs[i]->k[2], h->pdcch[cfi - 1].regs[i]->l, h->pdcch[cfi - 1].regs[i]->k[3], h->pdcch[cfi - 1].regs[i]->l);
+      // INFO("****** [DEBUG_PDC_14M]: CCE_idx = %u, isym = %u, iCarr = [%u, %u, %u, %u]", 
+      //         i,  h->pdcch[cfi - 1].regs[i]->l, h->pdcch[cfi - 1].regs[i]->k[0], h->pdcch[cfi - 1].regs[i]->k[1], 
+      //         h->pdcch[cfi - 1].regs[i]->k[2],  h->pdcch[cfi - 1].regs[i]->k[3]);
 
       k += 4;
     }
+    // printf("========================= PDCCH Symbol index==============================\n");
+    // for (i = start_reg; i < start_reg + 36; i++) {
+    //   printf("%u, ", h->pdcch[2].regs[i]->l);
+    // }
+    // printf("\n");
+    // printf("========================= PDCCH RE index==============================\n");
+    // for (i = start_reg; i < start_reg + 36; i++) {
+    //   printf("%u, %u, %u, %u, ", h->pdcch[2].regs[i]->k[0], h->pdcch[2].regs[i]->k[1], 
+    //           h->pdcch[2].regs[i]->k[2],  h->pdcch[2].regs[i]->k[3]);
+    // }
+    // printf("\n");
+
     return k;
   } else {
     ERROR("Out of range: start_reg + nof_reg must be lower than %d", h->pdcch[cfi - 1].nof_regs);
@@ -483,8 +498,10 @@ int srsran_regs_phich_get(srsran_regs_t* h, cf_t* slot_symbols, cf_t symbols[REG
     ngroup /= 2;
   }
   srsran_regs_ch_t* rch = &h->phich[ngroup];
+  // INFO("========================= PHICH ==============================");
   for (i = 0; i < rch->nof_regs && i * REGS_RE_X_REG < REGS_PHICH_NSYM; i++) {
     regs_get_reg(rch->regs[i], slot_symbols, &symbols[i * REGS_RE_X_REG], h->cell.nof_prb);
+    // INFO("****** [DEBUG_PCF_14M] REG_idx: %u, l = %d, k = %d, %d, %d, %d", i, rch->regs[i]->l, rch->regs[i]->k[0], rch->regs[i]->k[1], rch->regs[i]->k[2], rch->regs[i]->k[3]);
   }
   return i * REGS_RE_X_REG;
 }
@@ -574,8 +591,10 @@ int srsran_regs_pcfich_get(srsran_regs_t* h, cf_t* slot_symbols, cf_t ch_data[RE
 {
   srsran_regs_ch_t* rch = &h->pcfich;
   uint32_t          i;
+  // INFO("======================= PCFICH ==============================");
   for (i = 0; i < rch->nof_regs && i * REGS_RE_X_REG < REGS_PCFICH_NSYM; i++) {
     regs_get_reg(rch->regs[i], slot_symbols, &ch_data[i * REGS_RE_X_REG], h->cell.nof_prb);
+    // INFO("****** [DEBUG_PCF_14M] REG_idx: %u, l = %d, k = %d, %d, %d, %d", i, rch->regs[i]->l, rch->regs[i]->k[0], rch->regs[i]->k[1], rch->regs[i]->k[2], rch->regs[i]->k[3]);
   }
   return i * REGS_RE_X_REG;
 }
