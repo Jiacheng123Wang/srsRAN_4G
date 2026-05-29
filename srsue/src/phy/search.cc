@@ -226,7 +226,8 @@ search::ret_code search::run(srsran_cell_t* cell_, std::array<uint8_t, SRSRAN_BC
       *cell_ = new_cell;
     }
 
-    printf("======================== CELL_FOUND =======================\n");
+    printf("========= CELL_FOUND, Mode=%s, PCI=%d, PRB=%d, Ports=%d, CFO=%.1f KHz\n", 
+      new_cell.frame_type ? "TDD" : "FDD", new_cell.id, new_cell.nof_prb, new_cell.nof_ports, cfo / 1000);
 
     return CELL_FOUND;
   } else if (ret == 0) {
