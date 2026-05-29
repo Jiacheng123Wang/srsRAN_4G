@@ -484,24 +484,24 @@ int cc_worker::decode_pdsch(srsran_pdsch_ack_resource_t            ack_resource,
     }
   }
 
-  INFO("=================== Decoding PDSCH, NofBits = %d ==============================", ue_dl_cfg.cfg.pdsch.grant.tb[0].tbs);
-  // ==================== 新增的配置断层排查打印 开始 ====================
-  printf("\n[!!! URGENT PDSCH CFG DEBUG !!!] Before srsran_ue_dl_decode_pdsch:\n");
+  printf("===== Decoding PDSCH, MCS = %d, TBS = %d ==============================", ue_dl_cfg.cfg.pdsch.grant.tb[0].mcs_idx, ue_dl_cfg.cfg.pdsch.grant.tb[0].tbs);
+  // // ==================== 新增的配置断层排查打印 开始 ====================
+  // printf("\n[!!! URGENT PDSCH CFG DEBUG !!!] Before srsran_ue_dl_decode_pdsch:\n");
   
-  // 打印 RNTI (注意：不同版本的 srsRAN rnti 的位置可能在 pdsch 或 pdsch.grant 下，请根据编译报错微调)
-  printf("  - RNTI:      0x%X\n", ue_dl_cfg.cfg.pdsch.rnti); 
+  // // 打印 RNTI (注意：不同版本的 srsRAN rnti 的位置可能在 pdsch 或 pdsch.grant 下，请根据编译报错微调)
+  // printf("  - RNTI:      0x%X\n", ue_dl_cfg.cfg.pdsch.rnti); 
   
-  // 打印频域资源
-  printf("  - Nof_PRB:   %d\n", ue_dl_cfg.cfg.pdsch.grant.nof_prb);
+  // // 打印频域资源
+  // printf("  - Nof_PRB:   %d\n", ue_dl_cfg.cfg.pdsch.grant.nof_prb);
   
-  // 打印调制编码策略 (MCS)。如果此处编译报错找不到 mcs，可以尝试 grant.tb[0].mcs
-  printf("  - MCS:       %d\n", ue_dl_cfg.cfg.pdsch.grant.tb[0].mcs_idx); 
+  // // 打印调制编码策略 (MCS)。如果此处编译报错找不到 mcs，可以尝试 grant.tb[0].mcs
+  // printf("  - MCS:       %d\n", ue_dl_cfg.cfg.pdsch.grant.tb[0].mcs_idx); 
   
-  // 打印传输块大小 (TBS) 和冗余版本 (RV)
-  printf("  - TB[0] TBS: %d bits (Expected for MCS=0 is 152 bits!)\n", ue_dl_cfg.cfg.pdsch.grant.tb[0].tbs);
-  printf("  - TB[0] RV:  %d\n", ue_dl_cfg.cfg.pdsch.grant.tb[0].rv);
-  printf("================================================================\n\n");
-  // ==================== 新增的配置断层排查打印 结束 ====================
+  // // 打印传输块大小 (TBS) 和冗余版本 (RV)
+  // printf("  - TB[0] TBS: %d bits (Expected for MCS=0 is 152 bits!)\n", ue_dl_cfg.cfg.pdsch.grant.tb[0].tbs);
+  // printf("  - TB[0] RV:  %d\n", ue_dl_cfg.cfg.pdsch.grant.tb[0].rv);
+  // printf("================================================================\n\n");
+  // // ==================== 新增的配置断层排查打印 结束 ====================
 
   // Run PDSCH decoder
   if (decode_enable) {

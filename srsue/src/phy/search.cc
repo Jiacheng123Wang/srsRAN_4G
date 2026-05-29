@@ -200,16 +200,16 @@ search::ret_code search::run(srsran_cell_t* cell_, std::array<uint8_t, SRSRAN_BC
     srsran_bit_pack_vector(bch_payload.data(), mib_packed.data(), SRSRAN_BCH_PAYLOAD_LEN);
     std::copy(std::begin(mib_packed), std::end(mib_packed), std::begin(bch_payload));
 
-    fprintf(stdout,
-            "Found Cell:  Mode=%s, PCI=%d, PRB=%d, Ports=%d, CP=%s, CFO=%.1f KHz\n",
-            new_cell.frame_type ? "TDD" : "FDD",
-            new_cell.id,
-            new_cell.nof_prb,
-            new_cell.nof_ports,
-            new_cell.cp ? "Extended" : "Normal",
-            cfo / 1000);
+    // fprintf(stdout,
+    //         "Found Cell:  Mode=%s, PCI=%d, PRB=%d, Ports=%d, CP=%s, CFO=%.1f KHz\n",
+    //         new_cell.frame_type ? "TDD" : "FDD",
+    //         new_cell.id,
+    //         new_cell.nof_prb,
+    //         new_cell.nof_ports,
+    //         new_cell.cp ? "Extended" : "Normal",
+    //         cfo / 1000);
 
-    Info("SYNC:  MIB Decoded: Mode=%s, PCI=%d, PRB=%d, Ports=%d, CFO=%.1f KHz",
+    Info("====== SYNC:  MIB Decoded: Mode=%s, PCI=%d, PRB=%d, Ports=%d, CFO=%.1f KHz",
          new_cell.frame_type ? "TDD" : "FDD",
          new_cell.id,
          new_cell.nof_prb,
@@ -226,7 +226,7 @@ search::ret_code search::run(srsran_cell_t* cell_, std::array<uint8_t, SRSRAN_BC
       *cell_ = new_cell;
     }
 
-    fprintf(stdout, "======================== CELL_FOUND =======================\n");
+    printf("======================== CELL_FOUND =======================\n");
 
     return CELL_FOUND;
   } else if (ret == 0) {
