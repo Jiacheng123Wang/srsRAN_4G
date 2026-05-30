@@ -404,7 +404,7 @@ int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dc
       }
       mean /= e_bits;
 
-      INFO("========== e_bits: %d, nof_bits: %d, mean: %f\n", e_bits, nof_bits, mean);
+      DEBUG("========== e_bits: %d, nof_bits: %d, mean: %f\n", e_bits, nof_bits, mean);
 
       if (mean > 0.2f) {
         ret = srsran_pdcch_dci_decode(q, &q->llr[msg->location.ncce * 72], msg->payload, e_bits, nof_bits, &msg->rnti);
@@ -417,7 +417,7 @@ int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dc
         } else {
           ERROR("Error calling pdcch_dci_decode");
         }
-        INFO("*********** Decoded DCI: nCCE=%d, L=%d, format=%s, msg_len=%d, mean=%f, crc_rem=0x%x",
+        INFO("================= Decoded DCI: nCCE=%d, L=%d, format=%s, msg_len=%d, mean=%f, crc_rem=0x%x",
              msg->location.ncce,
              msg->location.L,
              srsran_dci_format_string(msg->format),
@@ -425,7 +425,7 @@ int srsran_pdcch_decode_msg(srsran_pdcch_t* q, srsran_dl_sf_cfg_t* sf, srsran_dc
              mean,
              msg->rnti);
       } else {
-        INFO("*********** Skipping DCI:  nCCE=%d, L=%d, msg_len=%d, mean=%f", msg->location.ncce, msg->location.L, nof_bits, mean);
+        DEBUG("*********** Skipping DCI:  nCCE=%d, L=%d, msg_len=%d, mean=%f", msg->location.ncce, msg->location.L, nof_bits, mean);
       }
     }
   } else if (msg != NULL) {

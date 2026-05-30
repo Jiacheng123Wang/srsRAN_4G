@@ -220,7 +220,7 @@ int srsran_pcfich_decode(srsran_pcfich_t*       q,
 
     /* decode CFI */
     float corr = srsran_pcfich_cfi_decode(q, &sf->cfi);
-    ERROR("=================================== srsran_pcfich_cfi_decode End, CFI = %d ============================", sf->cfi);
+    DEBUG("=================================== srsran_pcfich_cfi_decode End, CFI = %d ============================", sf->cfi);
 
     if (corr_result) {
       *corr_result = corr;

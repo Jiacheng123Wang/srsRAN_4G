@@ -261,7 +261,7 @@ bool cc_worker::work_dl_regular()
     if (phy->cell_state.is_active(cc_idx, sf_cfg_dl.tti) and (cc_idx != 0 or not ue_dl_cfg.cfg.dci.cif_present)) {
       found_dl_grant = decode_pdcch_dl() > 0;
       decode_pdcch_ul();
-      Error("--------------------------- decode pdcch, found_dl_grant = %d, cell.frame_type = %d ------------------------------------", found_dl_grant, cell.frame_type);
+      Debug("--------------------------- decode pdcch, found_dl_grant = %d, cell.frame_type = %d ------------------------------------", found_dl_grant, cell.frame_type);
     }
   }
 
@@ -269,13 +269,13 @@ bool cc_worker::work_dl_regular()
   uint32_t        grant_cc_idx = 0;
   bool            has_dl_grant = phy->get_dl_pending_grant(CURRENT_TTI, cc_idx, &grant_cc_idx, &dci_dl);
      
-  Error("=================================== has_dl_grant = %d ============================", has_dl_grant);
-  Error("----------------------------------------------------------------------");
+  Debug("=================================== has_dl_grant = %d ============================", has_dl_grant);
+  Debug("----------------------------------------------------------------------");
 
   // If found a dci for this carrier, generate a grant, pass it to MAC and decode the associated PDSCH
   if (has_dl_grant) {
 
-     Error("=================================== has_dl_grant ============================");
+     Debug("=================================== has_dl_grant ============================");
 
     // PDCCH order has no associated PDSCH to decode
     if (not dci_dl.is_pdcch_order) {
@@ -415,7 +415,7 @@ int cc_worker::decode_pdcch_dl()
 
   uint16_t dl_rnti = phy->stack->get_dl_sched_rnti(CURRENT_TTI);
 
-  Error("--------------------------- CURRENT_TTI = %d, dl_rnti = 0x%x ------------------------------------", CURRENT_TTI, dl_rnti);
+  Debug("--------------------------- CURRENT_TTI = %d, dl_rnti = 0x%x ------------------------------------", CURRENT_TTI, dl_rnti);
 
   if (dl_rnti != SRSRAN_INVALID_RNTI) {
     srsran_dci_dl_t dci[SRSRAN_MAX_CARRIERS] = {};
@@ -450,7 +450,7 @@ int cc_worker::decode_pdcch_dl()
     }
   }
 
-  Error("--------------------------- nof_grants = %d ------------------------------------", nof_grants);
+  Debug("--------------------------- nof_grants = %d ------------------------------------", nof_grants);
 
   return nof_grants;
 }
@@ -461,7 +461,7 @@ int cc_worker::decode_pdsch(srsran_pdsch_ack_resource_t            ack_resource,
 {
   srsran_pdsch_res_t pdsch_dec[SRSRAN_MAX_CODEWORDS] = {};
 
-  Error("=================== Decoding PDSCH Start ==============================");
+  Debug("=================== Decoding PDSCH Start ==============================");
 
   // See if at least 1 codeword needs to be decoded. If not need to be decode, resend ACK
   bool decode_enable                   = false;

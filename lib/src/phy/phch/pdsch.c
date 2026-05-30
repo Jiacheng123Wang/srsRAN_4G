@@ -826,7 +826,7 @@ int srsran_pdsch_decode(srsran_pdsch_t*        q,
          srsran_mod_string(cfg->grant.tb[0].mod),
          cfg->grant.nof_layers,
          nof_tb);
-    INFO("=========================== codedBits = %d, NofBits = %d, MCS = %d, RV = %d ===========================",
+    DEBUG("=========================== codedBits = %d, NofBits = %d, MCS = %d, RV = %d ===========================",
          cfg->grant.tb[0].nof_bits,
          cfg->grant.tb[0].tbs,
          cfg->grant.tb[0].mcs_idx,

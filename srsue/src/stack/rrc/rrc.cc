@@ -213,7 +213,7 @@ bool rrc::is_connected()
  */
 void rrc::run_tti()
 {
-  logger.error("RRC TTI is running, current state: %d", (int)state);
+  logger.debug("RRC TTI is running, current state: %d", (int)state);
   if (!initiated) {
     return;
   }

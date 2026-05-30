@@ -430,7 +430,7 @@ int main(int argc, char** argv)
   printf("PDCCH REGs initialized for cell with %d PRBs and %d ports\n", cell.nof_prb, cell.nof_ports);  
   printf("pdcch_tx.cell-> %d PRBs and %d ports\n", pdcch_tx.cell.nof_prb, pdcch_tx.cell.nof_ports);  
 
-  return(1);
+  //return(1);
 /*
   printf("pdcch_tx.regs.nof_regs = %d\n", pdcch_tx.regs->nof_regs);
   for (uint32_t j = 0; j < pdcch_tx.regs->nof_regs; j++) {

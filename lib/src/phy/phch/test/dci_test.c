@@ -31,7 +31,7 @@
 static int test_pdcch_orders()
 {
   static srsran_cell_t cell = {
-      6,                // nof_prb
+      25,                // nof_prb
       1,                 // nof_ports
       150,                 // cell_id
       SRSRAN_CP_NORM,    // cyclic prefix
