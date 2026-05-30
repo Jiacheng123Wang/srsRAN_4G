@@ -484,7 +484,8 @@ int cc_worker::decode_pdsch(srsran_pdsch_ack_resource_t            ack_resource,
     }
   }
 
-  printf("===== Decoding PDSCH, MCS = %d, TBS = %d ==============================", ue_dl_cfg.cfg.pdsch.grant.tb[0].mcs_idx, ue_dl_cfg.cfg.pdsch.grant.tb[0].tbs);
+  printf("===== Decoding PDSCH, MCS = %d, TBS = %d ==============================\n", 
+    ue_dl_cfg.cfg.pdsch.grant.tb[0].mcs_idx, ue_dl_cfg.cfg.pdsch.grant.tb[0].tbs);
   // // ==================== 新增的配置断层排查打印 开始 ====================
   // printf("\n[!!! URGENT PDSCH CFG DEBUG !!!] Before srsran_ue_dl_decode_pdsch:\n");
   
