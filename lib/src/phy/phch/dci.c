@@ -1258,8 +1258,8 @@ int srsran_dci_msg_pack_pdsch(srsran_cell_t*      cell,
     cfg = &_dci_cfg;
   }
 
-  printf("Packing DCI format %s\n", srsran_dci_format_string(msg->format));
-  printf("DCI alloc type: %d\n", dci->alloc_type);
+  // printf("Packing DCI format %s\n", srsran_dci_format_string(msg->format));
+  // printf("DCI alloc type: %d\n", dci->alloc_type);
   
   switch (msg->format) {
     case SRSRAN_DCI_FORMAT1:
