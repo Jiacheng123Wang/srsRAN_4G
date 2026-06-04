@@ -462,6 +462,14 @@ rrc::cell_selection_proc::cell_selection_proc(rrc* parent_) : rrc_ptr(parent_), 
 /// Verifies if serving cell passes selection criteria, UE is camping, and required SIBs were obtained
 bool rrc::cell_selection_proc::is_serv_cell_suitable() const
 {
+  ERROR("----------------------------------------------------------------");
+  ERROR("Checking if serving cell is suitable with RSRP=%f", meas_cells->serving_cell().get_rsrp());
+  ERROR("is_in_sync=%d, cell_is_camping=%d, cell_selection_criteria=%d, has_required_sibs=%d",
+        rrc_ptr->phy_ctrl->is_in_sync(),
+        rrc_ptr->phy->cell_is_camping(),
+        rrc_ptr->cell_selection_criteria(meas_cells->serving_cell().get_rsrp()),
+        meas_cells->serving_cell().has_sibs(mandatory_sibs));
+
   return rrc_ptr->phy_ctrl->is_in_sync() and rrc_ptr->phy->cell_is_camping() and
          rrc_ptr->cell_selection_criteria(meas_cells->serving_cell().get_rsrp()) and
          meas_cells->serving_cell().has_sibs(mandatory_sibs);
@@ -575,7 +583,7 @@ proc_outcome_t rrc::cell_selection_proc::start_next_cell_selection()
 
   // If any of the known cells meets the selection criteria or could not be selected, search again.
   if (not cell_search_called) {
-    Info("Could not select any known cell. Searching new cells");
+    Info("------------ Could not select any known cell. Searching new cells");
     state              = search_state_t::cell_search;
     cell_search_called = true;
     if (not rrc_ptr->cell_searcher.launch(&cell_search_fut)) {
@@ -665,7 +673,7 @@ proc_outcome_t rrc::cell_selection_proc::step_cell_config()
   if (is_serv_cell_suitable()) {
     return set_proc_complete();
   }
-  Error("Failed to configure serving cell");
+  Error("----------------- Failed to configure serving cell");
   return start_next_cell_selection();
 }
 
@@ -924,7 +932,7 @@ srsran::proc_outcome_t rrc::connection_request_proc::react(const cell_selection_
     Info("Configuring serving cell...");
     state = state_t::config_serving_cell;
     if (not rrc_ptr->serv_cell_cfg.launch(&serv_cfg_fut, rrc_ptr->ue_required_sibs)) {
-      Error("Attach request failed to configure serving cell...");
+      Error("----------------- Attach request failed to configure serving cell...");
       return proc_outcome_t::error;
     }
     return step();

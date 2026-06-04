@@ -281,6 +281,10 @@ int srsran_chest_dl_set_cell(srsran_chest_dl_t* q, srsran_cell_t cell)
 {
   int ret = SRSRAN_ERROR_INVALID_INPUTS;
   if (q != NULL && srsran_cell_isvalid(&cell)) {
+    // // ==================== 增加打印开始 ====================
+    // printf("[DEBUG_CHEST_DL] srsran_chest_dl_set_cell: Old_PCI=%d, New_PCI=%d, PRB=%d\n", 
+    //        q->cell.id, cell.id, cell.nof_prb);
+    // // ==================== 增加打印结束 ====================
     if (q->cell.id != cell.id || q->cell.nof_prb == 0) {
       q->cell = cell;
       ret     = srsran_refsignal_cs_set_cell(&q->csr_refs, cell);
@@ -819,7 +823,17 @@ static int estimate_port(srsran_chest_dl_t*     q,
   /* Use the known CSR signal to compute Least-squares estimates */
   srsran_vec_prod_conj_ccc(
       q->pilot_recv_signal, q->csr_refs.pilots[port_id / 2][sf->tti % 10], q->pilot_estimates, npilots);
-
+  // // ==================== 增加打印开始 ====================
+  // // 在这里计算未经滤波器平滑的原始 pilot 能量
+  // float raw_pilot_power = srsran_vec_avg_power_cf(q->pilot_recv_signal, npilots);
+  // float raw_pilot_power_dbm = 10 * log10f(raw_pilot_power);
+  
+  // if (sf->tti % 10 == 0 || sf->tti % 10 == 5) {
+  //     uint32_t v_shift = q->cell.id % 6;
+  //     printf("[DEBUG_EST_PORT] TTI:%04d | SF:%d | PCI:%d | v_shift:%d | PRB:%d | raw_pwr_dBm:%.2f\n",
+  //            sf->tti, sf->tti % 10, q->cell.id, v_shift, q->cell.nof_prb, raw_pilot_power_dbm);
+  // }
+  // // ==================== 增加打印结束 ====================
   /* Compute RSRP for the channel estimates in this port */
   if (cfg->rsrp_neighbour) {
     double energy                   = cabsf(srsran_vec_acc_cc(q->pilot_estimates, npilots) / npilots);
@@ -894,6 +908,10 @@ static float get_rsrq(srsran_chest_dl_t* q)
   for (int i = 0; i < q->nof_rx_antennas; i++) {
     n += q->cell.nof_prb * q->rsrp[i][0] / q->rssi[i][0];
   }
+
+  //fprintf(stdout, "==================== RSRQ: RSRP=%f, RSSI=%f, N=%d\n", n / q->nof_rx_antennas, q->rssi[0][0], q->cell.nof_prb);
+  //fflush(stdout);
+
   return n / q->nof_rx_antennas;
 }
 

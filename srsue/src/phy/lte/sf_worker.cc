@@ -80,6 +80,10 @@ void sf_worker::reset_cell_nolock(uint32_t cc_idx)
 
 bool sf_worker::set_cell_nolock(uint32_t cc_idx, srsran_cell_t cell_)
 {
+  // // ==================== 增加打印开始 ====================
+  // printf("\n[DEBUG_PHY_CFG] set_cell_nolock! cc_idx=%d, PCI=%d, PRB=%d, frame_type=%s\n",
+  //        cc_idx, cell_.id, cell_.nof_prb, (cell_.frame_type == SRSRAN_FDD) ? "FDD" : "TDD");
+  // // ==================== 增加打印结束 ====================
   if (cc_idx < cc_workers.size()) {
     if (!cc_workers[cc_idx]->set_cell_nolock(cell_)) {
       Error("Setting cell for cc=%d", cc_idx);
@@ -144,6 +148,10 @@ void sf_worker::set_tdd_config_nolock(srsran_tdd_config_t config)
 
 void sf_worker::set_config_nolock(uint32_t cc_idx, const srsran::phy_cfg_t& phy_cfg)
 {
+  // // ==================== 增加打印开始 ====================
+  // printf("[DEBUG_PHY_CFG] set_config_nolock trigger! cc_idx=%u, current_PCI=%u, current_PRB=%u, frame_type=%s\n",
+  //        cc_idx, cell.id, cell.nof_prb, (cell.frame_type == SRSRAN_FDD) ? "FDD" : "TDD");
+  // // ==================== 增加打印结束 ====================
   if (cc_idx < cc_workers.size()) {
     cc_workers[cc_idx]->set_config_nolock(phy_cfg);
     if (cc_idx > 0) {
@@ -172,6 +180,14 @@ void sf_worker::work_imp()
 
   // Loop through all carriers. carrier_idx=0 is PCell
   for (uint32_t carrier_idx = 0; carrier_idx < cc_workers.size(); carrier_idx++) {
+  // // ==================== 【安全调试日志开始】 ====================
+  //   // 每 1000 个 TTI 采样打印一次当前子帧在 TDD 配置下的链路方向
+  //   if (tti % 1000 == 0 && carrier_idx == 0) {
+  //     srsran_tdd_sf_t sf_type = srsran_sfidx_tdd_type(tdd_config, tti % 10);
+  //     printf("[DEBUG_WORKER_SF] TTI:%04u | SF:%u | Duplex:%s | TDD_SF_Type:%d (0:D, 1:U, 2:S)\n", 
+  //            tti, tti % 10, (cell.frame_type == SRSRAN_FDD) ? "FDD" : "TDD", (int)sf_type);
+  //   }
+  //   // ==================== 【安全调试日志结束】 ====================
     // Process all DL and special subframes
     if (srsran_sfidx_tdd_type(tdd_config, tti % 10) != SRSRAN_TDD_SF_U || cell.frame_type == SRSRAN_FDD) {
       srsran_mbsfn_cfg_t mbsfn_cfg;
@@ -232,6 +248,14 @@ void sf_worker::work_imp()
 
   // Call worker_end to transmit the signal
   phy->worker_end(context, tx_signal_ready, tx_signal_ptr);
+
+  // // ==================== 增加打印开始 ====================
+  // // 只打印前几个无线帧，防止刷屏
+  // if (tti < 100) { 
+  //     printf("[DEBUG_WORKER] TTI:%04d | SF:%d | frame_type:%s | rx_signal_ok:%d | PrachPtr:%p\n",
+  //            tti, tti % 10, (cell.frame_type == SRSRAN_FDD) ? "FDD" : "TDD", rx_signal_ok, prach_ptr);
+  // }
+  // // ==================== 增加打印结束 ====================
 
   if (rx_signal_ok) {
     update_measurements();
