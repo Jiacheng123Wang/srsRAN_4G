@@ -162,7 +162,7 @@ bool cc_worker::set_cell_nolock(srsran_cell_t cell_)
 
     if (cell.frame_type == SRSRAN_TDD && ue_dl_cfg.chest_cfg.estimator_alg != SRSRAN_ESTIMATOR_ALG_INTERPOLATE) {
       chest_default_cfg.estimator_alg = SRSRAN_ESTIMATOR_ALG_INTERPOLATE;
-      srsran::console("Enabling subframe interpolation for TDD cells (recommended setting)\n");
+      // srsran::console("Enabling subframe interpolation for TDD cells (recommended setting)\n");
     }
 
     cell_initiated = true;

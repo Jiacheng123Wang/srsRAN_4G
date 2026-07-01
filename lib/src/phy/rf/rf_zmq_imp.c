@@ -449,10 +449,10 @@ void update_rates(rf_zmq_handler_t* handler, double srate)
               srate / 1e6,
               handler->base_srate / 1e6);
     }
-    printf("Current sample rate is %.2f MHz with a base rate of %.2f MHz (x%d decimation)\n",
-           handler->srate / 1e6,
-           handler->base_srate / 1e6,
-           handler->decim_factor);
+    // printf("Current sample rate is %.2f MHz with a base rate of %.2f MHz (x%d decimation)\n",
+    //        handler->srate / 1e6,
+    //        handler->base_srate / 1e6,
+    //        handler->decim_factor);
   }
   pthread_mutex_unlock(&handler->decim_mutex);
 }
